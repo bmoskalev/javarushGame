@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     Page<Player> findAll(Specification<Player> specification, Pageable pageable);
 
+    Long count(Specification<Player> specification);
+
 }

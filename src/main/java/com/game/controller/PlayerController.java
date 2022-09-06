@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,22 +28,6 @@ import java.util.Optional;
 public class PlayerController {
     final
     PlayerService playerService;
-
-//    @Autowired
-//    @Qualifier("createPlayerValidator")
-//    private CreatePlayerValidator createPlayerValidator;
-//    @Qualifier("updatePlayerValidator")
-//    private UpdatePlayerValidator updatePlayerValidator;
-//
-//    @InitBinder("create")
-//    protected void initCreateBinder(WebDataBinder binder) {
-//        binder.setValidator(createPlayerValidator);
-//    }
-//
-//    @InitBinder("update")
-//    protected void initUpdateBinder(WebDataBinder binder) {
-//        binder.setValidator(createPlayerValidator);
-//    }
 
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
@@ -68,31 +53,23 @@ public class PlayerController {
             Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
             switch (order) {
                 case ID:
-//                players.addAll(playerRepository.findByOrderByIdAsc(pageable));
                     pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
                     break;
                 case NAME:
-//                players.addAll(playerRepository.findByOrderByNameAsc(pageable));
                     pageable = PageRequest.of(pageNumber, pageSize, Sort.by("name"));
                     break;
                 case EXPERIENCE:
-//                players.addAll(playerRepository.findByOrderByExperienceAsc(pageable));
                     pageable = PageRequest.of(pageNumber, pageSize, Sort.by("experience"));
                     break;
                 case BIRTHDAY:
-//                players.addAll(playerRepository.findByOrderByBirthdayAsc(pageable));
                     pageable = PageRequest.of(pageNumber, pageSize, Sort.by("birthday"));
                     break;
                 case LEVEL:
-//                players.addAll(playerRepository.findByOrderByLevelAsc(pageable));
                     pageable = PageRequest.of(pageNumber, pageSize, Sort.by("level"));
                     break;
             }
             players = playerService.getAllPlayers(name, title, race, profession, after, before, banned, minExperience,
-                    maxExperience,  minLevel, maxLevel, pageable);
-//            if (players.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
+                    maxExperience, minLevel, maxLevel, pageable);
             return new ResponseEntity<>(players.getContent(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -112,14 +89,10 @@ public class PlayerController {
                                                    @RequestParam(required = false) Integer minLevel,
                                                    @RequestParam(required = false) Integer maxLevel) {
         try {
-            Page<Player> players;
-            Pageable pageable = PageRequest.of(0, 3, Sort.by("id"));
-            players = playerService.getAllPlayers(name, title, race, profession, after, before, banned, minExperience,
-                    maxExperience,  minLevel, maxLevel, pageable);
-//            if (players.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
-            return new ResponseEntity<>(players.getTotalElements(), HttpStatus.OK);
+            Long count;
+            count = playerService.getCount(name, title, race, profession, after, before, banned, minExperience,
+                    maxExperience, minLevel, maxLevel);
+            return new ResponseEntity<>(count, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -139,7 +112,6 @@ public class PlayerController {
     }
 
     @PostMapping("/players")
-//    public ResponseEntity<Player> createPlayer(@Validated(CreatePlayerValidator.class) @RequestBody Player player) {
     public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
         try {
             if (player.getName() == null || player.getName().isEmpty() || player.getName().length() > 12) {
@@ -169,7 +141,6 @@ public class PlayerController {
     }
 
     @PostMapping("/players/{id}")
-//    public ResponseEntity<Player> updatePlayer(@PathVariable("id") long id, @Validated(UpdatePlayerValidator.class) @RequestBody Player player) {
     public ResponseEntity<Player> updatePlayer(@PathVariable("id") long id, @RequestBody Player player) {
         if (id < 1) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -23,6 +23,9 @@ public interface PlayerService {
 
     void deleteById(long id);
 
+    Long getCount(String name, String title, Race race, Profession profession, Long after, Long before, Boolean banned,
+                  Integer minExperience, Integer maxExperience, Integer minLevel, Integer maxLevel);
+
 //    Player update(Player player);
 
 }
