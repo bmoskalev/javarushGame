@@ -9,6 +9,9 @@ import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -62,10 +65,34 @@ public class PlayerController {
                                                       @RequestParam(required = false, defaultValue = "3") Integer pageSize) {
         try {
             Page<Player> players;
-            players = playerService.getAllPlayers(order, pageNumber, pageSize);
-            if (players.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
+            switch (order) {
+                case ID:
+//                players.addAll(playerRepository.findByOrderByIdAsc(pageable));
+                    pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
+                    break;
+                case NAME:
+//                players.addAll(playerRepository.findByOrderByNameAsc(pageable));
+                    pageable = PageRequest.of(pageNumber, pageSize, Sort.by("name"));
+                    break;
+                case EXPERIENCE:
+//                players.addAll(playerRepository.findByOrderByExperienceAsc(pageable));
+                    pageable = PageRequest.of(pageNumber, pageSize, Sort.by("experience"));
+                    break;
+                case BIRTHDAY:
+//                players.addAll(playerRepository.findByOrderByBirthdayAsc(pageable));
+                    pageable = PageRequest.of(pageNumber, pageSize, Sort.by("birthday"));
+                    break;
+                case LEVEL:
+//                players.addAll(playerRepository.findByOrderByLevelAsc(pageable));
+                    pageable = PageRequest.of(pageNumber, pageSize, Sort.by("level"));
+                    break;
             }
+            players = playerService.getAllPlayers(name, title, race, profession, after, before, banned, minExperience,
+                    maxExperience,  minLevel, maxLevel, pageable);
+//            if (players.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
             return new ResponseEntity<>(players.getContent(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -86,10 +113,12 @@ public class PlayerController {
                                                    @RequestParam(required = false) Integer maxLevel) {
         try {
             Page<Player> players;
-            players = playerService.getAllPlayers(PlayerOrder.ID, 0, 3);
-            if (players.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+            Pageable pageable = PageRequest.of(0, 3, Sort.by("id"));
+            players = playerService.getAllPlayers(name, title, race, profession, after, before, banned, minExperience,
+                    maxExperience,  minLevel, maxLevel, pageable);
+//            if (players.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
             return new ResponseEntity<>(players.getTotalElements(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
