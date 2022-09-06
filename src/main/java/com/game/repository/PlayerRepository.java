@@ -7,13 +7,4 @@ import java.util.List;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
-    List<Player> findByOrderByIdAsc();
-
-    List<Player> findByOrderByNameAsc();
-
-    List<Player> findByOrderByExperienceAsc();
-
-    List<Player> findByOrderByBirthdayAsc();
-
-    List<Player> findByOrderByLevelAsc();
 }

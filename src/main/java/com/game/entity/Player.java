@@ -1,5 +1,6 @@
 package com.game.entity;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
